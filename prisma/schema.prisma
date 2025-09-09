@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  name          String?
+  systemPrompt  String    @default("You are HIPAA GPT, a helpful medical AI assistant. Provide clear, accurate, and professional responses.")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  threads       Thread[]
+  uploadedFiles UploadedFile[]
+  settings      UserSettings?
+}
+
+model UserSettings {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  defaultTenant     String   @default("amanda")
+  enableRAG         Boolean  @default(false)
+  maxTokens         Int      @default(1000)
+  customVariables   Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Thread {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  tenant      String    @default("amanda")
+  isActive    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  messages    Message[]
+  
+  @@index([userId])
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  threadId    String
+  thread      Thread    @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  role        String    // 'user' | 'assistant' | 'system'
+  content     String    @db.Text
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  
+  @@index([threadId])
+}
+
+model UploadedFile {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName          String
+  fileType          String
+  fileSize          Int
+  processingStatus  String    @default("completed") // simplified - always completed
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  @@index([userId])
+}

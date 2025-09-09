@@ -1,0 +1,17 @@
+This is a test medical document for testing the upload functionality.
+
+Patient: John Doe
+Age: 45
+Diagnosis: Hypertension
+
+Medical History:
+The patient has a history of high blood pressure that has been managed with medication for the past 5 years. Regular checkups show stable condition with controlled blood pressure readings averaging 130/80 mmHg.
+
+Current Medications:
+- Lisinopril 10mg daily
+- Hydrochlorothiazide 25mg daily
+
+Recommendations:
+Continue current medication regimen and maintain regular exercise routine. Follow up in 3 months for blood pressure monitoring.
+
+This document is for testing purposes only and does not contain real patient information.
